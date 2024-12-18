@@ -6,6 +6,7 @@ import {
   materialRenderers,
   materialCells,
 } from "@jsonforms/material-renderers";
+import { JsonFormsCore } from '@jsonforms/core';
 
 const defaultSchema = {
   type: "object",
@@ -48,7 +49,6 @@ const defaultSchema = {
   required: ["name", "email"]
 };
 
-// UI Schema is optional, if not provided JsonForms will automatically generate one
 const defaultUiSchema = {
   elements: [
     {
@@ -95,7 +95,7 @@ const defaultUiSchema = {
 export default function Home() {
   const [schema, setSchema] = useState(JSON.stringify(defaultSchema, null, 2));
   const [uiSchema, setUiSchema] = useState(JSON.stringify(defaultUiSchema, null, 2));
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState<Record<string, unknown>>({});
   const [error, setError] = useState<string | null>(null);
 
   const handleSchemaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -103,7 +103,7 @@ export default function Home() {
     try {
       JSON.parse(e.target.value);
       setError(null);
-    } catch (err) {
+    } catch {
       setError("Invalid JSON in schema");
     }
   };
@@ -113,12 +113,12 @@ export default function Home() {
     try {
       JSON.parse(e.target.value);
       setError(null);
-    } catch (err) {
+    } catch {
       setError("Invalid JSON in UI schema");
     }
   };
 
-  const handleFormChange = ({ data, errors }: any) => {
+  const handleFormChange = ({ data, errors }: Pick<JsonFormsCore, 'data' | 'errors'>) => {
     setFormData(data);
     console.log('Form Data:', data);
     console.log('Validation Errors:', errors);
